@@ -1,5 +1,5 @@
 {
-  "name": "pump-fun-api-server",
+  "name": "pumpkin",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -21,10 +21,16 @@
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.31.1",
+    "@metaplex-foundation/mpl-token-metadata": "^3.4.0",
+    "@metaplex-foundation/umi": "^1.2.0",
+    "@metaplex-foundation/umi-bundle-defaults": "^1.2.0",
     "@nestjs/common": "^11.0.1",
+    "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
+    "@nestjs/event-emitter": "^3.0.1",
     "@nestjs/platform-express": "^11.0.1",
     "@solana/web3.js": "^1.98.2",
+    "@triton-one/yellowstone-grpc": "^4.0.2",
     "bs58": "^6.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
