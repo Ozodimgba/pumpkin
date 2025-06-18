@@ -18,6 +18,7 @@ import bs58 from 'bs58';
 import { MetadataCacheService } from '../meta/meta.service';
 import { MetadataService } from '../meta/metadata.service';
 import { MetadataQueryService } from '../meta/metadata-query.service';
+import { CategorizationService } from '../categorization/categorization.service';
 
 // Keep all your existing interfaces
 interface CompiledInstruction {
@@ -59,8 +60,8 @@ export class GeyserService implements OnModuleInit, OnModuleDestroy {
   private client: Client;
   private stream: ClientDuplexStream<SubscribeRequest, SubscribeUpdate>;
   private statsInterval: NodeJS.Timeout;
+  private tokenMap = new Map<string, any>();
 
-  // Keep all your existing constants
   private readonly PUMP_FUN_PROGRAM_ID =
     '6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P';
   private readonly PUMP_FUN_MINT_AUTHORITY =
@@ -89,6 +90,7 @@ export class GeyserService implements OnModuleInit, OnModuleDestroy {
     private metadataService: MetadataService,
     private configService: ConfigService,
     private queryService: MetadataQueryService,
+    private categorizationService: CategorizationService,
   ) {}
 
   async onModuleInit() {
@@ -135,7 +137,9 @@ export class GeyserService implements OnModuleInit, OnModuleDestroy {
         5 * 60 * 1000,
       );
 
-      await this.handleStreamEvents(this.stream);
+      this.handleStreamEvents(this.stream).catch((error) => {
+        this.logger.error('Stream handling error:', error);
+      });
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
@@ -152,6 +156,10 @@ export class GeyserService implements OnModuleInit, OnModuleDestroy {
     if (this.stream) {
       this.stream.end();
     }
+  }
+
+  getTokensFromMap(): any[] {
+    return Array.from(this.tokenMap.values());
   }
 
   // All your existing helper methods (unchanged)
@@ -410,8 +418,8 @@ export class GeyserService implements OnModuleInit, OnModuleDestroy {
     return this.queryService.search(term);
   }
 
-  public getRecentTokens() {
-    return this.queryService.getRecent();
+  public getRecentTokens(minutesAgo?: number) {
+    return this.queryService.getRecent(minutesAgo);
   }
 
   public getAllTokens() {

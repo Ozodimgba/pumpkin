@@ -5,6 +5,7 @@ import { PumpFunModule } from './pumpfun/pumpfun.module';
 import { GeyserModule } from './geyser/geyser.module';
 import { MetaModule } from './meta/meta.module';
 import { ConfigModule } from '@nestjs/config';
+import { CategorizationModule } from './categorization/categorization.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { ConfigModule } from '@nestjs/config';
     GeyserModule,
     MetaModule,
     ConfigModule.forRoot({ isGlobal: true }),
+    CategorizationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -27,12 +27,12 @@ export class GeyserController {
     return this.geyserService.searchTokens(term);
   }
 
-  //   @Get('recent/:minutes?')
-  //   getRecentTokens(@Param('minutes') minutes?: string) {
-  //     const minutesAgo = minutes ? parseInt(minutes) : 60;
-  //     console.log(minutesAgo);
-  //     return this.geyserService.getRecentTokens();
-  //   }
+  @Get('recent/:minutes')
+  getRecentTokens(@Param('minutes') minutes?: string) {
+    const minutesAgo = minutes ? parseInt(minutes) : 60;
+
+    return this.geyserService.getRecentTokens(minutesAgo);
+  }
 
   @Get('all')
   getAllTokens() {
