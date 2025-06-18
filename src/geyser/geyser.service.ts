@@ -19,6 +19,7 @@ import { MetadataCacheService } from '../meta/meta.service';
 import { MetadataService } from '../meta/metadata.service';
 import { MetadataQueryService } from '../meta/metadata-query.service';
 import { CategorizationService } from '../categorization/categorization.service';
+import { TokenMetadata } from 'src/meta/meta.types';
 
 // Keep all your existing interfaces
 interface CompiledInstruction {
@@ -321,6 +322,8 @@ export class GeyserService implements OnModuleInit, OnModuleDestroy {
               mintAddress,
               metadata,
             });
+
+            await this.sendToCategorization(metadata);
             return; // Success, exit the retry loop
           }
         } catch (error) {
@@ -344,6 +347,27 @@ export class GeyserService implements OnModuleInit, OnModuleDestroy {
       this.metadataCache.markFailedAttempt(mintAddress);
     } finally {
       this.metadataCache.markFetchCompleted(mintAddress);
+    }
+  }
+
+  private async sendToCategorization(metadata: TokenMetadata): Promise<void> {
+    try {
+      // Create token stream DTO from metadata
+      const tokenStreamDto = {
+        name: metadata.symbol || metadata.name || 'UNKNOWN',
+        description: metadata.offChainMetadata?.description || undefined,
+        timestamp: new Date(),
+        mint: metadata.mint,
+      };
+
+      // Send to categorization service
+      await this.categorizationService.processTokenStream(tokenStreamDto);
+
+      this.logger.debug(
+        `Sent token ${tokenStreamDto.name} to categorization service`,
+      );
+    } catch (error) {
+      this.logger.error(`Failed to send token to categorization: ${error}`);
     }
   }
 

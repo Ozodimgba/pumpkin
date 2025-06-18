@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { CategorizationService } from './categorization.service';
 import { TokenStreamDto } from './categorization.dto';
 import { TestStreamService } from './test-stream';
@@ -40,5 +40,20 @@ export class CategorizationController {
   addCategory(@Body() { category }: { category: string }) {
     this.categorizationService.addCategory(category);
     return { status: 'added', category };
+  }
+
+  @Get('live-feed')
+  getLiveFeed() {
+    return {
+      message: 'Live categorization feed from pump.fun tokens',
+      trends: this.categorizationService.getTop10MetaTrends(),
+      bufferSize: this.categorizationService.getCategoryStats().bufferSize,
+      totalProcessed: this.categorizationService.getCategoryStats().totalTokens,
+    };
+  }
+
+  @Get('recent-examples/:category')
+  getRecentExamples(@Param('category') category: string) {
+    return this.categorizationService.getCategoryMetadata(category);
   }
 }
